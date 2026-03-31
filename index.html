@@ -1,751 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Name Vault — Liquid Edition | Nabil Irza Prawira</title>
+    <title>The Name Vault — Liquid Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        /* 🌌 Pro Color Palette & Variables */
-        :root {
-            --bg-deep: #030305;
-            --glass-bg: rgba(20, 20, 28, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-highlight: rgba(255, 255, 255, 0.15);
-            --gold: #ffbd59;
-            --gold-glow: rgba(255, 189, 89, 0.4);
-            --accent-liquid: #ff477e;
-            --cyan-liquid: #00f5ff;
-            --text-main: #f8fafc;
-            --text-muted: #8b9bb4;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Outfit', sans-serif;
-        }
-        
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 40px 20px;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* 💧 Liquid Background Animation */
-        .bg-liquid {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
-            background: radial-gradient(circle at center, #0a0a12 0%, #030305 100%);
-        }
-
-        .blob {
-            position: absolute;
-            filter: blur(80px);
-            opacity: 0.5;
-            animation: morph 12s ease-in-out infinite, moveBlob 20s infinite alternate;
-        }
-
-        .blob-1 {
-            width: 500px; height: 500px;
-            background: linear-gradient(135deg, var(--gold), var(--accent-liquid));
-            top: -10%; left: -10%;
-        }
-
-        .blob-2 {
-            width: 600px; height: 600px;
-            background: linear-gradient(135deg, var(--cyan-liquid), var(--accent-liquid));
-            bottom: -20%; right: -10%;
-            animation-delay: -5s;
-        }
-
-        @keyframes morph {
-            0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
-            34% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
-            67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
-        }
-
-        @keyframes moveBlob {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-            100% { transform: translate(150px, 100px) scale(1.2) rotate(45deg); }
-        }
-
-        /* 🧊 Liquid Glass Container */
-        .container {
-            width: 100%;
-            max-width: 720px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            padding: 50px;
-            border-radius: 32px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6),
-                        inset 0 1px 0 var(--glass-highlight),
-                        inset 0 0 20px rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--glass-border);
-            z-index: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Subtle noise texture for realism */
-        .container::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E');
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
-            font-weight: 800;
-            text-align: center;
-            background: linear-gradient(to right, #fff, var(--gold), #fff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shine 4s linear infinite;
-        }
-
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
-        
-        /* 📜 Profile & Info Section */
-        .profile-section {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 35px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-        }
-        
-        .profile-title {
-            color: var(--gold);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 12px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-title::before {
-            content: '';
-            display: inline-block;
-            width: 8px; height: 8px;
-            background: var(--gold);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--gold);
-        }
-        
-        p.subtitle {
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.8;
-            margin-bottom: 20px;
-            font-weight: 300;
-        }
-        
-        .author-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid var(--glass-border);
-        }
-        
-        .instagram-link {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, rgba(255, 189, 89, 0.1), rgba(255, 71, 126, 0.1));
-            border: 1px solid rgba(255, 189, 89, 0.2);
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            user-select: none; /* Prevents text selection on multi-click */
-        }
-
-        .instagram-link:hover {
-            background: var(--gold);
-            color: #000;
-            box-shadow: 0 0 20px var(--gold-glow);
-            transform: translateY(-2px);
-        }
-
-        /* 🎛️ Glass Buttons */
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-        
-        .btn {
-            background: rgba(255, 255, 255, 0.03);
-            color: #ffffff;
-            border: 1px solid var(--glass-border);
-            padding: 20px;
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: 16px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn::after {
-            content: '→';
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--gold);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 0 15px var(--gold-glow);
-            transform: translateY(-3px);
-            color: var(--gold);
-        }
-
-        .btn:hover::after {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        /* 🔄 View Animations */
-        .section {
-            display: none;
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .section.active { display: block; }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-        }
-
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .back-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            padding: 8px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .back-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--gold); }
-        
-        .section-title {
-            color: #ffffff;
-            font-size: 2rem;
-            font-weight: 800;
-        }
-        
-        /* 🔍 Search & Lists */
-        .search-input {
-            width: 100%;
-            padding: 18px 20px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            color: #fff;
-            font-size: 1rem;
-            transition: 0.3s;
-            margin-bottom: 20px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-        }
-        .search-input:focus {
-            border-color: var(--gold);
-            outline: none;
-            background: rgba(0, 0, 0, 0.6);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 20px rgba(255, 189, 89, 0.15);
-        }
-
-        .list-container {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .list-container::-webkit-scrollbar { width: 6px; }
-        .list-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
-        .list-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
-        .list-container::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-        
-        .name-item {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 18px 24px;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-            animation: fadeInItem 0.5s ease backwards;
-        }
-
-        @keyframes fadeInItem {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .name-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 189, 89, 0.3);
-            transform: translateX(8px);
-            box-shadow: -5px 5px 15px rgba(0,0,0,0.3);
-        }
-        
-        .vote-btn {
-            background: rgba(255, 189, 89, 0.1);
-            color: var(--gold);
-            border: 1px solid rgba(255, 189, 89, 0.2);
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 800;
-            transition: all 0.3s ease;
-        }
-        .vote-btn:hover { 
-            background: var(--gold); 
-            color: #000; 
-            box-shadow: 0 0 15px var(--gold-glow);
-            transform: scale(1.05);
-        }
-
-        /* ⏱️ Pro Timers / Progress */
-        .timer-card {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--glass-border);
-            padding: 20px;
-            border-radius: 16px;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .timer-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold), var(--accent-liquid));
-            width: 0%;
-            transition: width 1s linear;
-            box-shadow: 0 0 10px var(--gold-glow);
-        }
-
-        /* 🔔 Custom Toast Notification */
-        #toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(20, 20, 28, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--gold);
-            color: #fff;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px var(--gold-glow);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000;
-        }
-        #toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        
-        .waiting-text {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            font-style: italic;
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="bg-liquid">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
-    <div id="toast">Message goes here</div>
+    <div id="toast">Pesan sistem...</div>
 
     <div class="container">
         
         <div id="menu-section" class="section active">
             <h1>The Name Vault</h1>
-            
             <div class="profile-section">
-                <div class="profile-title">System Architecture & Lore</div>
+                <div class="profile-title">System Architecture</div>
                 <p class="subtitle">
-                    Welcome to the central archive of pure, authentic, and high-aesthetic names. Every single identity listed here is a unique creation, handcrafted with deep thought and original concepts.
-                    <br><br>
-                    <strong>Ecosystem Rule:</strong> To maintain a prestigious and non-flooded environment, the submission algorithm requires a strict processing delay. Quality over quantity.
+                    Arsip pusat identitas murni dan estetis. Setiap nama adalah kreasi orisinal yang dikurasi secara mendalam.
                 </p>
                 <div class="author-info">
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Curator: <span style="color: #fff; font-weight:800">Nabil Irza Prawira</span></p>
-                    <a id="secret-trigger" class="instagram-link" onclick="handleSecretClick(event)">@n4bilirzap.ip</a>
+                    <p>Curator: <span>Nabil Irza Prawira</span></p>
+                    <a id="secret-trigger" class="instagram-link">@n4bilirzap.ip</a>
                 </div>
             </div>
             
             <div class="btn-group">
-                <button class="btn" onclick="showSection('all-names-section'); renderAllNames();">
-                    <span>Daftar Semua Nama</span>
-                </button>
-                <button class="btn" onclick="showSection('top-names-section'); renderTopNames();">
-                    <span>Top Nama Terbaik</span>
-                </button>
-                <button class="btn" style="border-color: rgba(255, 189, 89, 0.3);" onclick="showSection('add-name-section')">
-                    <span style="color: var(--gold)">Publish / Tambah Nama</span>
-                </button>
+                <button class="btn" onclick="showSection('all-names-section'); renderAllNames();">Daftar Semua Nama</button>
+                <button class="btn" onclick="showSection('top-names-section'); renderTopNames();">Top Nama Terbaik</button>
+                <button class="btn accent-btn" onclick="showSection('add-name-section')">Publish Identitas</button>
             </div>
         </div>
 
         <div id="all-names-section" class="section">
             <div class="header-actions">
-                <button class="back-btn" onclick="showSection('menu-section')">← Kembali</button>
+                <button class="back-btn" onclick="showSection('menu-section')">←</button>
                 <h2 class="section-title">All Identities</h2>
             </div>
-            
-            <input type="text" id="search-bar" class="search-input" placeholder="🔍 Search a unique identity..." oninput="filterNames()">
+            <input type="text" id="search-bar" class="search-input" placeholder="Cari identitas..." oninput="filterNames()">
             <div class="list-container" id="all-names-list"></div>
         </div>
 
         <div id="top-names-section" class="section">
             <div class="header-actions">
-                <button class="back-btn" onclick="showSection('menu-section')">← Kembali</button>
+                <button class="back-btn" onclick="showSection('menu-section')">←</button>
                 <h2 class="section-title">Leaderboard</h2>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Ranked by community appreciation protocols.</p>
             <div class="list-container" id="top-names-list"></div>
         </div>
 
         <div id="add-name-section" class="section">
             <div class="header-actions">
-                <button class="back-btn" onclick="showSection('menu-section')">← Kembali</button>
+                <button class="back-btn" onclick="showSection('menu-section')">←</button>
                 <h2 class="section-title">Submit New</h2>
             </div>
+            <input type="text" id="new-name" class="search-input" placeholder="Masukkan nama baru...">
+            <button class="btn accent-btn full-width" onclick="submitNewName()">INITIATE PROTOCOL</button>
             
-            <div style="margin-bottom: 25px;">
-                <label style="display:block; margin-bottom:12px; color:var(--text-muted); font-size:0.9rem; font-weight:600; letter-spacing: 1px;">NEW IDENTITY NAME:</label>
-                <input type="text" id="new-name" class="search-input" placeholder="Enter custom name...">
-            </div>
-            
-            <button class="btn" style="width: 100%; border-color: var(--gold); color: var(--gold); justify-content: center;" onclick="submitNewName()">
-                INITIATE PUBLISH PROTOCOL
-            </button>
-            
-            <div id="process-dashboard" style="display: none; margin-top: 20px;">
-                <div class="waiting-text" id="waiting-msg">
-                    Identitas masuk ke daftar tunggu. Sinkronisasi sedang berjalan...
-                </div>
-
-                <div class="timer-card" id="card-publish" style="display: block;">
-                    <div class="timer-header">
-                        <span style="color: #fff; font-weight: 600;">Protokol Antrean Utama</span>
-                        <span id="time-publish" style="color: var(--gold);">5:00</span>
-                    </div>
+            <div id="process-dashboard" class="dashboard-hidden">
+                <div class="waiting-text" id="waiting-msg">Identitas masuk ke daftar tunggu...</div>
+                <div class="timer-card">
+                    <div class="timer-header"><span>Main Vault</span><span id="time-publish">5:00</span></div>
                     <div class="progress-bar"><div class="progress-fill" id="fill-publish"></div></div>
                 </div>
-
-                <div class="timer-card" id="card-top" style="display: block;">
-                    <div class="timer-header">
-                        <span style="color: #fff; font-weight: 600;">Sinkronisasi Papan Peringkat</span>
-                        <span id="time-top" style="color: var(--gold);">10:00</span>
-                    </div>
+                <div class="timer-card">
+                    <div class="timer-header"><span>Leaderboard Sync</span><span id="time-top">10:00</span></div>
                     <div class="progress-bar"><div class="progress-fill" id="fill-top"></div></div>
                 </div>
             </div>
-
         </div>
-
     </div>
 
-    <script>
-        // 🌟 Exact list from Nabil
-        const rawDefaultNames = [
-            "Akane Yinara", "Diona Azalea", "Dionte Azalea", "Shenna Maheswari Yin", "Asmondia Zea Kalila", "Akane Naura Shenina",
-            "Dionte Azka Mahardika", "Akane Ravindra Shena", "Kenzo Yuan Mahesa", "Arka Qinata Yin", "Akane Shankara", "Dionte Elvano",
-            "Asmond Reynard", "Almond Reynard", "Yuan Alfarezel", "Muhammad Nabil Irza Prawira", "Nabil Irza Prawira", "Iriandis",
-            "Nabil Irza Iriandis", "Balladeer", "Aira Chris Pratama", "Long Zhang", "Yin", "Yuratensei Nabil Al-Xan", "Nabil Izanagi Ardhana",
-            "Yurizaen Nabil Kanzazena", "Nabil Auriel Kaneta", "Akari Hana", "Enzo Arashi", "Gasawa Imausha", "Myden XenZrar Hanzen Quaine",
-            "Nyxie Seraphina Wijayal", "Rin Azumi", "Kurogame Akumu", "Yuratensei (Shinwa Kiyomi)", "Nabila Myden", "Nabil Innato",
-            "Cyron Nabil I", "Shoyun Raiden", "Akari YuriXna", "Yuriza Rin Akumura I", "Rin Akumura II", "Konoe Akari", "Nailun Kanzazena",
-            "Hanan Riandra Malik", "Kiran Harsa Latifa", "Ye Shulan", "Xe Zilin", "Xen Lin Mei", "Rin Kiyumi", "Rin Aneso","Rin Yunzi",
-            "Qixas", "Qinto Tantano", "Shinma Terano", "Ojulus", "Innama", "Hyana", "Imatusha", "Xinosa", "XenZen", "Nabil Kaneta Aridhana",
-            "Vaneo Ardhana", "Yuriza III", "Nova Genevieve Prawira", "Kaesang Xylo Verdian", "Nabil Elrian Shinaka", "Kaneta Youra (Kiyan)",
-            "Keira Vanesa Qing", "Nailun Al-Jazzera", "Akari Kaneta Yora (Yor)", "Sino Manito Aridhana", "Nabil Elnis Fausha", "Nabil Irianna Al-Syifa",
-            "Kaesang Abimanyu", "Shentu Xian", "Nabil Irianna Al-Jazzera II", "Di-Sha Long", "Ardiansyah Al-Jazzera", "Kala La Jazzera III",
-            "Nabil Dinasti Affan", "Nabil Felix F. M.", "Citra Wirasaba", "Ni-Tian Chrystal", "Yue Xin", "Wirasaba", "Leonardo", "Lien Hua",
-            "Shentu Jue", "Akari Yoru", "Nabil Nozomi", "Nabil Shonwa", "Nabil Lhusfa", "Farhan Maulana", "Suci Al-Jazzera", "Ni-Tian Long",
-            "Ni-Tian Lu", "Di-Sha Wan", "Xinmei", "Nabil Ayana", "Myden Nabil", "Nabil Han", "Suci Ramadhan", "Aida", "Nabil", "Fani Ferdiansyah", "Cyron II"
-        ];
-
-        // System Storage
-        let defaultNames = JSON.parse(localStorage.getItem('vaultNamesLiquidV1'));
-        if (!defaultNames) {
-            defaultNames = rawDefaultNames.map(name => ({
-                name: name,
-                votes: Math.floor(Math.random() * 50) + 10
-            }));
-            localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
-        }
-
-        // Custom Toast Function
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.innerText = message;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3500);
-        }
-
-        // Navigation
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            
-            if(sectionId !== 'all-names-section') {
-                document.getElementById('search-bar').value = "";
-            }
-        }
-
-        // Render Names
-        function renderAllNames(filteredArray = defaultNames) {
-            const listDiv = document.getElementById('all-names-list');
-            listDiv.innerHTML = '';
-
-            filteredArray.forEach((item, i) => {
-                const originalIndex = defaultNames.findIndex(n => n.name === item.name);
-                const div = document.createElement('div');
-                div.className = 'name-item';
-                div.style.animationDelay = `${i * 0.05}s`;
-                div.innerHTML = `
-                    <span style="font-weight:600; font-size:1.1rem">${item.name}</span>
-                    <button class="vote-btn" onclick="voteName(${originalIndex})">Appreciate (${item.votes})</button>
-                `;
-                listDiv.appendChild(div);
-            });
-        }
-
-        function filterNames() {
-            const searchVal = document.getElementById('search-bar').value.toLowerCase();
-            const filtered = defaultNames.filter(item => item.name.toLowerCase().includes(searchVal));
-            renderAllNames(filtered);
-        }
-
-        function renderTopNames() {
-            const listDiv = document.getElementById('top-names-list');
-            listDiv.innerHTML = '';
-            const sortedNames = [...defaultNames].sort((a, b) => b.votes - a.votes).slice(0, 50);
-            
-            sortedNames.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'name-item';
-                div.style.animationDelay = `${index * 0.05}s`;
-                
-                let rankColor = "var(--text-muted)";
-                if (index === 0) rankColor = "#ffd700"; 
-                else if (index === 1) rankColor = "#c0c0c0"; 
-                else if (index === 2) rankColor = "#cd7f32"; 
-
-                div.innerHTML = `
-                    <span style="font-weight:600; font-size: 1.1rem;">
-                        <span style="color:${rankColor}; margin-right:10px; font-weight:800;">#${index + 1}</span> 
-                        ${item.name}
-                    </span>
-                    <span style="color: var(--gold); font-size: 0.9rem; font-weight:800;">${item.votes} VP</span>
-                `;
-                listDiv.appendChild(div);
-            });
-        }
-
-        function voteName(index) {
-            defaultNames[index].votes += 1;
-            localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
-            showToast(`✨ Appreciated: ${defaultNames[index].name}`);
-            
-            const searchVal = document.getElementById('search-bar').value;
-            if(searchVal !== "") { filterNames(); } else { renderAllNames(); }
-        }
-
-
-        // 🔐 SECRET ADMIN OVERRIDE PROTOCOL 🔐
-        let secretClicks = 0;
-        let secretTimeout;
-        let isAdmin = false;
-
-        function handleSecretClick(e) {
-            e.preventDefault(); // Mencegah pindah halaman seketika
-            secretClicks++;
-            clearTimeout(secretTimeout);
-
-            if(secretClicks >= 4) {
-                isAdmin = true;
-                showToast("🔐 SYSTEM OVERRIDE: Admin Mode Engaged.");
-                secretClicks = 0;
-            } else {
-                // Beri waktu 400ms. Kalau tidak di-klik lagi, baru buka IG normal
-                secretTimeout = setTimeout(() => {
-                    if (secretClicks > 0 && secretClicks < 4 && !isAdmin) {
-                        window.open("https://instagram.com/n4bilirzap.ip", "_blank");
-                    }
-                    secretClicks = 0; // Reset
-                }, 400); 
-            }
-        }
-
-
-        // Submit Logic with Progress Bars & Admin Bypass
-        let isProcessing = false;
-
-        function submitNewName() {
-            if(isProcessing) {
-                showToast("⚠️ Protokol sedang berjalan!");
-                return;
-            }
-
-            const nameInput = document.getElementById('new-name');
-            const nameValue = nameInput.value.trim();
-
-            if (nameValue === "") {
-                showToast("⚠️ Identitas tidak boleh kosong!");
-                return;
-            }
-
-            // CEK ADMIN MODE
-            if (isAdmin) {
-                showToast(`⚡ ADMIN BYPASS: ${nameValue} langsung dipublikasi!`);
-                defaultNames.push({ name: nameValue, votes: 0 });
-                localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
-                nameInput.value = "";
-                return; // Berhenti di sini, abaikan semua delay
-            }
-
-            // USER BIASA (Ada Delay)
-            isProcessing = true;
-            document.getElementById('process-dashboard').style.display = 'block';
-            document.getElementById('waiting-msg').style.display = 'block';
-
-            // Constants
-            const totalPublishTime = 5 * 60; // 5 menit
-            const totalTopTime = 10 * 60;    // 10 menit
-            
-            let publishSeconds = totalPublishTime;
-            let topSeconds = totalTopTime;
-
-            const timePublishEl = document.getElementById('time-publish');
-            const timeTopEl = document.getElementById('time-top');
-            const fillPublishEl = document.getElementById('fill-publish');
-            const fillTopEl = document.getElementById('fill-top');
-
-            // Reset widths
-            fillPublishEl.style.width = '0%';
-            fillTopEl.style.width = '0%';
-
-            showToast("⏳ Menambahkan ke antrean...");
-
-            const interval = setInterval(() => {
-                publishSeconds--;
-                topSeconds--;
-
-                // Publish Update
-                if (publishSeconds >= 0) {
-                    const m = Math.floor(publishSeconds / 60);
-                    const s = publishSeconds % 60;
-                    timePublishEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-                    fillPublishEl.style.width = `${((totalPublishTime - publishSeconds) / totalPublishTime) * 100}%`;
-                }
-
-                if (publishSeconds === 0) {
-                    timePublishEl.innerText = "SELESAI";
-                    timePublishEl.style.color = "#00f5ff";
-                    defaultNames.push({ name: nameValue, votes: 0 });
-                    localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
-                    showToast(`✅ ${nameValue} berhasil ditambahkan ke Vault Utama!`);
-                }
-
-                // Top Update
-                if (topSeconds >= 0) {
-                    const m = Math.floor(topSeconds / 60);
-                    const s = topSeconds % 60;
-                    timeTopEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-                    fillTopEl.style.width = `${((totalTopTime - topSeconds) / totalTopTime) * 100}%`;
-                }
-
-                if (topSeconds === 0) {
-                    timeTopEl.innerText = "SELESAI";
-                    timeTopEl.style.color = "#00f5ff";
-                    showToast(`🏆 ${nameValue} sudah masuk ke Papan Peringkat!`);
-                    clearInterval(interval);
-                    isProcessing = false;
-                    nameInput.value = "";
-                    document.getElementById('waiting-msg').innerText = "✅ Semua proses sinkronisasi selesai.";
-                    document.getElementById('waiting-msg').style.color = "var(--gold)";
-                }
-            }, 1000);
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
