@@ -1,4 +1,4 @@
-// Database Identitas (Raw Data)
+// 🌟 Exact list from Nabil
 const rawDefaultNames = [
     "Akane Yinara", "Diona Azalea", "Dionte Azalea", "Shenna Maheswari Yin", "Asmondia Zea Kalila", "Akane Naura Shenina",
     "Dionte Azka Mahardika", "Akane Ravindra Shena", "Kenzo Yuan Mahesa", "Arka Qinata Yin", "Akane Shankara", "Dionte Elvano",
@@ -17,100 +17,205 @@ const rawDefaultNames = [
     "Ni-Tian Lu", "Di-Sha Wan", "Xinmei", "Nabil Ayana", "Myden Nabil", "Nabil Han", "Suci Ramadhan", "Aida", "Nabil", "Fani Ferdiansyah", "Cyron II"
 ];
 
-// Inisialisasi Storage
-let vaultData = JSON.parse(localStorage.getItem('vaultNames_V2')) || rawDefaultNames.map(n => ({name: n, votes: Math.floor(Math.random()*20)}));
-
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.innerText = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+// System Storage
+let defaultNames = JSON.parse(localStorage.getItem('vaultNamesLiquidV1'));
+if (!defaultNames) {
+    defaultNames = rawDefaultNames.map(name => ({
+        name: name,
+        votes: Math.floor(Math.random() * 50) + 10
+    }));
+    localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
 }
 
-function showSection(id) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+// Custom Toast Function
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.innerText = message;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 3500);
 }
 
-function renderAllNames(data = vaultData) {
-    const list = document.getElementById('all-names-list');
-    list.innerHTML = data.map((item, i) => `
-        <div class="name-item">
-            <span>${item.name}</span>
-            <button class="vote-btn" onclick="vote(${i})">${item.votes}</button>
-        </div>
-    `).join('');
+// Navigation
+window.showSection = function(sectionId) {
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+    
+    if(sectionId !== 'all-names-section') {
+        document.getElementById('search-bar').value = "";
+    }
 }
 
-function filterNames() {
-    const q = document.getElementById('search-bar').value.toLowerCase();
-    const filtered = vaultData.filter(i => i.name.toLowerCase().includes(q));
+// Render Names
+window.renderAllNames = function(filteredArray = defaultNames) {
+    const listDiv = document.getElementById('all-names-list');
+    listDiv.innerHTML = '';
+
+    filteredArray.forEach((item, i) => {
+        const originalIndex = defaultNames.findIndex(n => n.name === item.name);
+        const div = document.createElement('div');
+        div.className = 'name-item';
+        div.style.animationDelay = `${i * 0.05}s`;
+        div.innerHTML = `
+            <span style="font-weight:600; font-size:1.1rem">${item.name}</span>
+            <button class="vote-btn" onclick="voteName(${originalIndex})">Appreciate (${item.votes})</button>
+        `;
+        listDiv.appendChild(div);
+    });
+}
+
+window.filterNames = function() {
+    const searchVal = document.getElementById('search-bar').value.toLowerCase();
+    const filtered = defaultNames.filter(item => item.name.toLowerCase().includes(searchVal));
     renderAllNames(filtered);
 }
 
-function renderTopNames() {
-    const list = document.getElementById('top-names-list');
-    const sorted = [...vaultData].sort((a,b) => b.votes - a.votes).slice(0, 20);
-    list.innerHTML = sorted.map((item, i) => `
-        <div class="name-item">
-            <span><b>#${i+1}</b> ${item.name}</span>
-            <span style="color:var(--gold)">${item.votes} VP</span>
-        </div>
-    `).join('');
-}
-
-function vote(i) {
-    vaultData[i].votes++;
-    localStorage.setItem('vaultNames_V2', JSON.stringify(vaultData));
-    renderAllNames();
-    showToast("✨ Appreciated!");
-}
-
-// 🔐 ADMIN PROTOCOL
-let clicks = 0; let isAdmin = false;
-document.getElementById('secret-trigger').addEventListener('click', (e) => {
-    clicks++;
-    if(clicks === 4) {
-        isAdmin = true; showToast("🔐 Admin Mode: Active");
-    }
-    setTimeout(() => { 
-        if(clicks > 0 && clicks < 4 && !isAdmin) window.open("https://instagram.com/n4bilirzap.ip", "_blank");
-        clicks = 0; 
-    }, 400);
-});
-
-function submitNewName() {
-    const name = document.getElementById('new-name').value.trim();
-    if(!name) return showToast("Isi nama dulu!");
+window.renderTopNames = function() {
+    const listDiv = document.getElementById('top-names-list');
+    listDiv.innerHTML = '';
+    const sortedNames = [...defaultNames].sort((a, b) => b.votes - a.votes).slice(0, 50);
     
-    if(isAdmin) {
-        vaultData.push({name: name, votes: 0});
-        localStorage.setItem('vaultNames_V2', JSON.stringify(vaultData));
-        showToast("⚡ Admin Bypass: Sukses!");
-        document.getElementById('new-name').value = "";
+    sortedNames.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'name-item';
+        div.style.animationDelay = `${index * 0.05}s`;
+        
+        let rankColor = "var(--text-muted)";
+        if (index === 0) rankColor = "#ffd700"; 
+        else if (index === 1) rankColor = "#c0c0c0"; 
+        else if (index === 2) rankColor = "#cd7f32"; 
+
+        div.innerHTML = `
+            <span style="font-weight:600; font-size: 1.1rem;">
+                <span style="color:${rankColor}; margin-right:10px; font-weight:800;">#${index + 1}</span> 
+                ${item.name}
+            </span>
+            <span style="color: var(--gold); font-size: 0.9rem; font-weight:800;">${item.votes} VP</span>
+        `;
+        listDiv.appendChild(div);
+    });
+}
+
+window.voteName = function(index) {
+    defaultNames[index].votes += 1;
+    localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
+    showToast(`✨ Appreciated: ${defaultNames[index].name}`);
+    
+    const searchVal = document.getElementById('search-bar').value;
+    if(searchVal !== "") { filterNames(); } else { renderAllNames(); }
+}
+
+
+// 🔐 SECRET ADMIN OVERRIDE PROTOCOL 🔐
+let secretClicks = 0;
+let secretTimeout;
+let isAdmin = false;
+
+window.handleSecretClick = function(e) {
+    e.preventDefault(); 
+    secretClicks++;
+    clearTimeout(secretTimeout);
+
+    if(secretClicks >= 4) {
+        isAdmin = true;
+        showToast("🔐 SYSTEM OVERRIDE: Admin Mode Engaged.");
+        secretClicks = 0;
+    } else {
+        secretTimeout = setTimeout(() => {
+            if (secretClicks > 0 && secretClicks < 4 && !isAdmin) {
+                window.open("https://instagram.com/n4bilirzap.ip", "_blank");
+            }
+            secretClicks = 0; 
+        }, 400); 
+    }
+}
+
+
+// Submit Logic with Progress Bars & Admin Bypass
+let isProcessing = false;
+
+window.submitNewName = function() {
+    if(isProcessing) {
+        showToast("⚠️ Protokol sedang berjalan!");
         return;
     }
 
+    const nameInput = document.getElementById('new-name');
+    const nameValue = nameInput.value.trim();
+
+    if (nameValue === "") {
+        showToast("⚠️ Identitas tidak boleh kosong!");
+        return;
+    }
+
+    // CEK ADMIN MODE
+    if (isAdmin) {
+        showToast(`⚡ ADMIN BYPASS: ${nameValue} langsung dipublikasi!`);
+        defaultNames.push({ name: nameValue, votes: 0 });
+        localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
+        nameInput.value = "";
+        return; 
+    }
+
+    // USER BIASA (Ada Delay)
+    isProcessing = true;
     document.getElementById('process-dashboard').style.display = 'block';
-    let pSec = 300; // 5 menit
-    let tSec = 600; // 10 menit
+    document.getElementById('waiting-msg').style.display = 'block';
+
+    // Constants
+    const totalPublishTime = 5 * 60; // 5 menit
+    const totalTopTime = 10 * 60;    // 10 menit
     
+    let publishSeconds = totalPublishTime;
+    let topSeconds = totalTopTime;
+
+    const timePublishEl = document.getElementById('time-publish');
+    const timeTopEl = document.getElementById('time-top');
+    const fillPublishEl = document.getElementById('fill-publish');
+    const fillTopEl = document.getElementById('fill-top');
+
+    // Reset widths
+    fillPublishEl.style.width = '0%';
+    fillTopEl.style.width = '0%';
+
+    showToast("⏳ Menambahkan ke antrean...");
+
     const interval = setInterval(() => {
-        pSec--; tSec--;
-        document.getElementById('fill-publish').style.width = ((300-pSec)/300*100) + "%";
-        document.getElementById('fill-top').style.width = ((600-tSec)/600*100) + "%";
-        
-        if(pSec === 0) {
-            vaultData.push({name: name, votes: 0});
-            localStorage.setItem('vaultNames_V2', JSON.stringify(vaultData));
-            showToast("✅ Vault Updated!");
+        publishSeconds--;
+        topSeconds--;
+
+        // Publish Update
+        if (publishSeconds >= 0) {
+            const m = Math.floor(publishSeconds / 60);
+            const s = publishSeconds % 60;
+            timePublishEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            fillPublishEl.style.width = `${((totalPublishTime - publishSeconds) / totalPublishTime) * 100}%`;
         }
-        if(tSec === 0) {
+
+        if (publishSeconds === 0) {
+            timePublishEl.innerText = "SELESAI";
+            timePublishEl.style.color = "#00f5ff";
+            defaultNames.push({ name: nameValue, votes: 0 });
+            localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
+            showToast(`✅ ${nameValue} berhasil ditambahkan ke Vault Utama!`);
+        }
+
+        // Top Update
+        if (topSeconds >= 0) {
+            const m = Math.floor(topSeconds / 60);
+            const s = topSeconds % 60;
+            timeTopEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            fillTopEl.style.width = `${((totalTopTime - topSeconds) / totalTopTime) * 100}%`;
+        }
+
+        if (topSeconds === 0) {
+            timeTopEl.innerText = "SELESAI";
+            timeTopEl.style.color = "#00f5ff";
+            showToast(`🏆 ${nameValue} sudah masuk ke Papan Peringkat!`);
             clearInterval(interval);
-            showToast("🏆 Sync Complete!");
-            document.getElementById('new-name').value = "";
+            isProcessing = false;
+            nameInput.value = "";
+            document.getElementById('waiting-msg').innerText = "✅ Semua proses sinkronisasi selesai.";
+            document.getElementById('waiting-msg').style.color = "var(--gold)";
         }
     }, 1000);
 }
-
-// Start
-renderAllNames();
