@@ -1,33 +1,25 @@
-// 🌟 Exact list from Nabil
-const rawDefaultNames = [
-    "Akane Yinara", "Diona Azalea", "Dionte Azalea", "Shenna Maheswari Yin", "Asmondia Zea Kalila", "Akane Naura Shenina",
-    "Dionte Azka Mahardika", "Akane Ravindra Shena", "Kenzo Yuan Mahesa", "Arka Qinata Yin", "Akane Shankara", "Dionte Elvano",
-    "Asmond Reynard", "Almond Reynard", "Yuan Alfarezel", "Muhammad Nabil Irza Prawira", "Nabil Irza Prawira", "Iriandis",
-    "Nabil Irza Iriandis", "Balladeer", "Aira Chris Pratama", "Long Zhang", "Yin", "Yuratensei Nabil Al-Xan", "Nabil Izanagi Ardhana",
-    "Yurizaen Nabil Kanzazena", "Nabil Auriel Kaneta", "Akari Hana", "Enzo Arashi", "Gasawa Imausha", "Myden XenZrar Hanzen Quaine",
-    "Nyxie Seraphina Wijayal", "Rin Azumi", "Kurogame Akumu", "Yuratensei (Shinwa Kiyomi)", "Nabila Myden", "Nabil Innato",
-    "Cyron Nabil I", "Shoyun Raiden", "Akari YuriXna", "Yuriza Rin Akumura I", "Rin Akumura II", "Konoe Akari", "Nailun Kanzazena",
-    "Hanan Riandra Malik", "Kiran Harsa Latifa", "Ye Shulan", "Xe Zilin", "Xen Lin Mei", "Rin Kiyumi", "Rin Aneso", "Rin Yunzi",
-    "Qixas", "Qinto Tantano", "Shinma Terano", "Ojulus", "Innama", "Hyana", "Imatusha", "Xinosa", "XenZen", "Nabil Kaneta Aridhana",
-    "Vaneo Ardhana", "Yuriza III", "Nova Genevieve Prawira", "Kaesang Xylo Verdian", "Nabil Elrian Shinaka", "Kaneta Youra (Kiyan)",
-    "Keira Vanesa Qing", "Nailun Al-Jazzera", "Akari Kaneta Yora (Yor)", "Sino Manito Aridhana", "Nabil Elnis Fausha", "Nabil Irianna Al-Syifa",
-    "Kaesang Abimanyu", "Shentu Xian", "Nabil Irianna Al-Jazzera II", "Di-Sha Long", "Ardiansyah Al-Jazzera", "Kala La Jazzera III",
-    "Nabil Dinasti Affan", "Nabil Felix F. M.", "Citra Wirasaba", "Ni-Tian Chrystal", "Yue Xin", "Wirasaba", "Leonardo", "Lien Hua",
-    "Shentu Jue", "Akari Yoru", "Nabil Nozomi", "Nabil Shonwa", "Nabil Lhusfa", "Farhan Maulana", "Suci Al-Jazzera", "Ni-Tian Long",
-    "Ni-Tian Lu", "Di-Sha Wan", "Xinmei", "Nabil Ayana", "Myden Nabil", "Nabil Han", "Suci Ramadhan", "Aida", "Nabil", "Fani Ferdiansyah", "Cyron II"
-];
+// IMPORT SISTEM FIREBASE DARI CDN
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// System Storage
-let defaultNames = JSON.parse(localStorage.getItem('vaultNamesLiquidV1'));
-if (!defaultNames) {
-    defaultNames = rawDefaultNames.map(name => ({
-        name: name,
-        votes: Math.floor(Math.random() * 50) + 10
-    }));
-    localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
-}
+// KODE RAHASIA FIREBASE KAMU
+const firebaseConfig = {
+  apiKey: "AIzaSyB_aesyRyMJftF1y9AQn6MiLWu0XTdKL4g",
+  authDomain: "the-name-vault-d9a8f.firebaseapp.com",
+  projectId: "the-name-vault-d9a8f",
+  storageBucket: "the-name-vault-d9a8f.firebasestorage.app",
+  messagingSenderId: "607838251875",
+  appId: "1:607838251875:web:91862a55886277ce100156"
+};
 
-// Custom Toast Function
+// Inisialisasi Firebase & Database
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Data Array Global
+let defaultNames = [];
+
+// Fungsi Toast Notifikasi
 function showToast(message) {
     const toast = document.getElementById('toast');
     toast.innerText = message;
@@ -35,11 +27,10 @@ function showToast(message) {
     setTimeout(() => { toast.classList.remove('show'); }, 3500);
 }
 
-// Navigation
-function showSection(sectionId) {
+// Navigasi (Jadikan window. agar bisa dipanggil dari HTML)
+window.showSection = function(sectionId) {
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
     document.getElementById(sectionId).classList.add('active');
-    
     if(sectionId !== 'all-names-section') {
         document.getElementById('search-bar').value = "";
     }
@@ -49,21 +40,19 @@ function showSection(sectionId) {
 function renderAllNames(filteredArray = defaultNames) {
     const listDiv = document.getElementById('all-names-list');
     listDiv.innerHTML = '';
-
     filteredArray.forEach((item, i) => {
-        const originalIndex = defaultNames.findIndex(n => n.name === item.name);
         const div = document.createElement('div');
         div.className = 'name-item';
         div.style.animationDelay = `${i * 0.05}s`;
         div.innerHTML = `
             <span style="font-weight:600; font-size:1.1rem">${item.name}</span>
-            <button class="vote-btn" onclick="voteName(${originalIndex})">Appreciate (${item.votes})</button>
+            <button class="vote-btn" onclick="voteName('${item.id}', ${item.votes}, '${item.name}')">Appreciate (${item.votes})</button>
         `;
         listDiv.appendChild(div);
     });
 }
 
-function filterNames() {
+window.filterNames = function() {
     const searchVal = document.getElementById('search-bar').value.toLowerCase();
     const filtered = defaultNames.filter(item => item.name.toLowerCase().includes(searchVal));
     renderAllNames(filtered);
@@ -95,13 +84,37 @@ function renderTopNames() {
     });
 }
 
-function voteName(index) {
-    defaultNames[index].votes += 1;
-    localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
-    showToast(`✨ Appreciated: ${defaultNames[index].name}`);
+// 🌐 MENGAMBIL DATA DARI DATABASE SECARA REAL-TIME 🌐
+const namesCollection = collection(db, "names");
+const q = query(namesCollection, orderBy("name")); // Urutkan sesuai abjad
+
+// onSnapshot: Otomatis update layar kalau ada data baru di database
+onSnapshot(q, (snapshot) => {
+    defaultNames = [];
+    snapshot.forEach((doc) => {
+        defaultNames.push({ id: doc.id, ...doc.data() }); 
+    });
+
+    const searchVal = document.getElementById('search-bar');
+    if(searchVal && searchVal.value !== "") { filterNames(); } else { renderAllNames(); }
     
-    const searchVal = document.getElementById('search-bar').value;
-    if(searchVal !== "") { filterNames(); } else { renderAllNames(); }
+    if(document.getElementById('top-names-section').classList.contains('active')) {
+        renderTopNames();
+    }
+});
+
+// 🌐 FUNGSI VOTE KE DATABASE 🌐
+window.voteName = async function(docId, currentVotes, name) {
+    try {
+        const nameRef = doc(db, "names", docId);
+        await updateDoc(nameRef, {
+            votes: currentVotes + 1
+        });
+        showToast(`✨ Appreciated: ${name}`);
+    } catch (e) {
+        showToast("❌ Gagal memberikan apresiasi. Cek koneksi.");
+        console.error(e);
+    }
 }
 
 // 🔐 SECRET ADMIN OVERRIDE PROTOCOL 🔐
@@ -109,8 +122,8 @@ let secretClicks = 0;
 let secretTimeout;
 let isAdmin = false;
 
-function handleSecretClick(e) {
-    e.preventDefault(); // Mencegah pindah halaman seketika
+window.handleSecretClick = function(e) {
+    e.preventDefault(); 
     secretClicks++;
     clearTimeout(secretTimeout);
 
@@ -119,40 +132,38 @@ function handleSecretClick(e) {
         showToast("🔐 SYSTEM OVERRIDE: Admin Mode Engaged.");
         secretClicks = 0;
     } else {
-        // Beri waktu 400ms. Kalau tidak di-klik lagi, baru buka IG normal
         secretTimeout = setTimeout(() => {
             if (secretClicks > 0 && secretClicks < 4 && !isAdmin) {
                 window.open("https://instagram.com/n4bilirzap.ip", "_blank");
             }
-            secretClicks = 0; // Reset
+            secretClicks = 0; 
         }, 400); 
     }
 }
 
-// Submit Logic with Progress Bars & Admin Bypass
+// 🌐 Submit NAMA KE DATABASE FIREBASE 🌐
 let isProcessing = false;
 
-function submitNewName() {
-    if(isProcessing) {
-        showToast("⚠️ Protokol sedang berjalan!");
-        return;
-    }
+window.submitNewName = async function() {
+    if(isProcessing) { showToast("⚠️ Protokol sedang berjalan!"); return; }
 
     const nameInput = document.getElementById('new-name');
     const nameValue = nameInput.value.trim();
 
-    if (nameValue === "") {
-        showToast("⚠️ Identitas tidak boleh kosong!");
-        return;
-    }
+    if (nameValue === "") { showToast("⚠️ Identitas tidak boleh kosong!"); return; }
 
-    // CEK ADMIN MODE
+    // CEK ADMIN MODE (Bypass Delay)
     if (isAdmin) {
-        showToast(`⚡ ADMIN BYPASS: ${nameValue} langsung dipublikasi!`);
-        defaultNames.push({ name: nameValue, votes: 0 });
-        localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
-        nameInput.value = "";
-        return; // Berhenti di sini, abaikan semua delay
+        showToast(`⚡ ADMIN BYPASS: Mendorong ke Database...`);
+        try {
+            await addDoc(collection(db, "names"), { name: nameValue, votes: 0 });
+            showToast(`⚡ ADMIN BYPASS: ${nameValue} berhasil dipublikasi!`);
+            nameInput.value = "";
+        } catch(e) { 
+            showToast("❌ Gagal menghubungi Vault!"); 
+            console.error(e);
+        }
+        return; 
     }
 
     // USER BIASA (Ada Delay)
@@ -160,10 +171,8 @@ function submitNewName() {
     document.getElementById('process-dashboard').style.display = 'block';
     document.getElementById('waiting-msg').style.display = 'block';
 
-    // Constants
-    const totalPublishTime = 5 * 60; // 5 menit
-    const totalTopTime = 10 * 60;    // 10 menit
-    
+    const totalPublishTime = 5 * 60; 
+    const totalTopTime = 10 * 60;    
     let publishSeconds = totalPublishTime;
     let topSeconds = totalTopTime;
 
@@ -172,13 +181,11 @@ function submitNewName() {
     const fillPublishEl = document.getElementById('fill-publish');
     const fillTopEl = document.getElementById('fill-top');
 
-    // Reset widths
     fillPublishEl.style.width = '0%';
     fillTopEl.style.width = '0%';
+    showToast("⏳ Menambahkan ke antrean server...");
 
-    showToast("⏳ Menambahkan ke antrean...");
-
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
         publishSeconds--;
         topSeconds--;
 
@@ -193,9 +200,15 @@ function submitNewName() {
         if (publishSeconds === 0) {
             timePublishEl.innerText = "SELESAI";
             timePublishEl.style.color = "#00f5ff";
-            defaultNames.push({ name: nameValue, votes: 0 });
-            localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
-            showToast(`✅ ${nameValue} berhasil ditambahkan ke Vault Utama!`);
+            
+            // PUSH KE DATABASE SETELAH WAKTU HABIS
+            try {
+                await addDoc(collection(db, "names"), { name: nameValue, votes: 0 });
+                showToast(`✅ ${nameValue} berhasil ditambahkan ke Vault Utama!`);
+            } catch(e) {
+                showToast("❌ Gagal menghubungi server saat publish.");
+                console.error(e);
+            }
         }
 
         // Top Update
@@ -209,11 +222,11 @@ function submitNewName() {
         if (topSeconds === 0) {
             timeTopEl.innerText = "SELESAI";
             timeTopEl.style.color = "#00f5ff";
-            showToast(`🏆 ${nameValue} sudah masuk ke Papan Peringkat!`);
+            showToast(`🏆 ${nameValue} sudah terverifikasi penuh!`);
             clearInterval(interval);
             isProcessing = false;
             nameInput.value = "";
-            document.getElementById('waiting-msg').innerText = "✅ Semua proses sinkronisasi selesai.";
+            document.getElementById('waiting-msg').innerText = "✅ Semua proses sinkronisasi server selesai.";
             document.getElementById('waiting-msg').style.color = "var(--gold)";
         }
     }, 1000);
