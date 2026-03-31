@@ -36,7 +36,7 @@ function showToast(message) {
 }
 
 // Navigation
-window.showSection = function(sectionId) {
+function showSection(sectionId) {
     document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
     document.getElementById(sectionId).classList.add('active');
     
@@ -46,7 +46,7 @@ window.showSection = function(sectionId) {
 }
 
 // Render Names
-window.renderAllNames = function(filteredArray = defaultNames) {
+function renderAllNames(filteredArray = defaultNames) {
     const listDiv = document.getElementById('all-names-list');
     listDiv.innerHTML = '';
 
@@ -63,13 +63,13 @@ window.renderAllNames = function(filteredArray = defaultNames) {
     });
 }
 
-window.filterNames = function() {
+function filterNames() {
     const searchVal = document.getElementById('search-bar').value.toLowerCase();
     const filtered = defaultNames.filter(item => item.name.toLowerCase().includes(searchVal));
     renderAllNames(filtered);
 }
 
-window.renderTopNames = function() {
+function renderTopNames() {
     const listDiv = document.getElementById('top-names-list');
     listDiv.innerHTML = '';
     const sortedNames = [...defaultNames].sort((a, b) => b.votes - a.votes).slice(0, 50);
@@ -95,7 +95,7 @@ window.renderTopNames = function() {
     });
 }
 
-window.voteName = function(index) {
+function voteName(index) {
     defaultNames[index].votes += 1;
     localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
     showToast(`✨ Appreciated: ${defaultNames[index].name}`);
@@ -104,14 +104,13 @@ window.voteName = function(index) {
     if(searchVal !== "") { filterNames(); } else { renderAllNames(); }
 }
 
-
 // 🔐 SECRET ADMIN OVERRIDE PROTOCOL 🔐
 let secretClicks = 0;
 let secretTimeout;
 let isAdmin = false;
 
-window.handleSecretClick = function(e) {
-    e.preventDefault(); 
+function handleSecretClick(e) {
+    e.preventDefault(); // Mencegah pindah halaman seketika
     secretClicks++;
     clearTimeout(secretTimeout);
 
@@ -120,20 +119,20 @@ window.handleSecretClick = function(e) {
         showToast("🔐 SYSTEM OVERRIDE: Admin Mode Engaged.");
         secretClicks = 0;
     } else {
+        // Beri waktu 400ms. Kalau tidak di-klik lagi, baru buka IG normal
         secretTimeout = setTimeout(() => {
             if (secretClicks > 0 && secretClicks < 4 && !isAdmin) {
                 window.open("https://instagram.com/n4bilirzap.ip", "_blank");
             }
-            secretClicks = 0; 
+            secretClicks = 0; // Reset
         }, 400); 
     }
 }
 
-
 // Submit Logic with Progress Bars & Admin Bypass
 let isProcessing = false;
 
-window.submitNewName = function() {
+function submitNewName() {
     if(isProcessing) {
         showToast("⚠️ Protokol sedang berjalan!");
         return;
@@ -153,7 +152,7 @@ window.submitNewName = function() {
         defaultNames.push({ name: nameValue, votes: 0 });
         localStorage.setItem('vaultNamesLiquidV1', JSON.stringify(defaultNames));
         nameInput.value = "";
-        return; 
+        return; // Berhenti di sini, abaikan semua delay
     }
 
     // USER BIASA (Ada Delay)
